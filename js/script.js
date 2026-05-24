@@ -14,6 +14,13 @@ const academicEvents = [
 
 let taskProgressChart;
 
+const monthlyTaskHistory = [
+    { label: "Jan", completed: 12, pending: 2 },
+    { label: "Feb", completed: 14, pending: 3 },
+    { label: "Mar", completed: 16, pending: 2 },
+    { label: "Apr", completed: 13, pending: 4 }
+];
+
 function login() {
     const usernameInput = document.getElementById("username")?.value.trim();
     const passwordInput = document.getElementById("password")?.value;
@@ -208,7 +215,10 @@ function createTaskChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true, ticks: { precision: 0 } }
+            }
         }
     });
 }
@@ -216,25 +226,26 @@ function createTaskChart() {
 function getTaskChartData() {
     const rows = [...document.querySelectorAll("[data-task-id]")];
     const saved = JSON.parse(localStorage.getItem("taskStatus") || "{}");
-    const subjects = [];
-    const totals = {};
-    const completed = {};
+    const months = [...monthlyTaskHistory.map((item) => item.label)];
+    const totals = Object.fromEntries(monthlyTaskHistory.map((item) => [item.label, item.completed + item.pending]));
+    const completed = Object.fromEntries(monthlyTaskHistory.map((item) => [item.label, item.completed]));
 
     rows.forEach((row) => {
-        const subject = row.children[1]?.textContent.trim() || "Other";
+        const dueDate = new Date(`${row.dataset.due || "2026-05-01"}T00:00:00`);
+        const monthLabel = dueDate.toLocaleDateString("en-GB", { month: "short" });
         const taskId = row.dataset.taskId;
         const fallback = row.querySelector(".task-status")?.textContent.trim().toLowerCase().replace(" ", "-");
         const status = saved[taskId] || (fallback === "completed" ? "completed" : fallback === "in-progress" ? "progress" : "pending");
 
-        if (!subjects.includes(subject)) subjects.push(subject);
-        totals[subject] = (totals[subject] || 0) + 1;
-        completed[subject] = (completed[subject] || 0) + (status === "completed" ? 1 : 0);
+        if (!months.includes(monthLabel)) months.push(monthLabel);
+        totals[monthLabel] = (totals[monthLabel] || 0) + 1;
+        completed[monthLabel] = (completed[monthLabel] || 0) + (status === "completed" ? 1 : 0);
     });
 
     return {
-        labels: subjects.map((subject) => subject === "Malay Language" ? "Malay" : subject),
-        completed: subjects.map((subject) => completed[subject] || 0),
-        pending: subjects.map((subject) => totals[subject] - (completed[subject] || 0))
+        labels: months,
+        completed: months.map((month) => completed[month] || 0),
+        pending: months.map((month) => totals[month] - (completed[month] || 0))
     };
 }
 
