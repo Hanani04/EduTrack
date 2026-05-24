@@ -1,10 +1,12 @@
-# Student Productivity Dashboard
+# EduTrack
+
+**Organize Your Academic Journey**
 
 Static web prototype prepared for the IMS566 Individual Project.
 
 ## Project Overview
 
-The Student Productivity Dashboard helps a secondary school student monitor academic performance, homework completion, attendance, co-curricular achievements, subject registration, and class information. The project is intentionally database-free so it can be published directly with GitHub Pages.
+EduTrack helps a secondary school student monitor academic performance, homework completion, attendance, co-curricular achievements, subject registration, and class information. The project is intentionally database-free so it can be published directly with GitHub Pages.
 
 ## Demo Login
 
