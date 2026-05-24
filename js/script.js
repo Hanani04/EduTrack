@@ -2,7 +2,7 @@ const demoUser = {
     username: "student123",
     password: "12345",
     name: "Ahmad Iqmal",
-    className: "2 Integrity"
+    className: "2 Amanah"
 };
 
 const academicEvents = [
